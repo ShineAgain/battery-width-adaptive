@@ -1,53 +1,52 @@
 package com.batteryadaptive.lsp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.system.Os;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.File;
+import io.github.libxposed.service.XposedService;
 
-public class PrefsUtil {
+/**
+ * 配置读写工具。
+ * Hook 侧（SystemUI 进程）只读远程配置 getRemotePreferences("config")；
+ * App 侧通过 libxposed service 写入同一组远程配置，本地 SharedPreferences 仅作界面显示留存。
+ */
+public final class PrefsUtil {
+
+    public static final String PREF_NAME = "config";
 
     private PrefsUtil() {
     }
 
-    /**
-     * 把 config.xml 及其目录 chmod 成 SystemUI 可读，
-     * 否则 XSharedPreferences 读不到模块配置。
-     */
-    public static void makeWorldReadable(Context context) {
-        try {
-            File dataDir = new File(context.getApplicationInfo().dataDir);
-            chmod(dataDir, 0711);
-            File prefsDir = new File(dataDir, "shared_prefs");
-            chmod(prefsDir, 0771);
-            File prefsFile = new File(prefsDir, "config.xml");
-            chmod(prefsFile, 0664);
-        } catch (Throwable ignored) {
-        }
+    public static SharedPreferences local(Context context) {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    private static void chmod(File file, int mode) throws Exception {
-        if (file.exists()) {
-            Os.chmod(file.getAbsolutePath(), mode);
-        }
-    }
-
-    public static SharedPreferences prefs(Context context) {
-        return context.getSharedPreferences("config", Context.MODE_PRIVATE);
-    }
-
-    public static void saveConfig(Activity activity, int hollowHeightDp, int meterWidthDp) {
-        prefs(activity).edit()
+    public static void saveConfig(Context context, XposedService service, int hollowHeightDp, int meterWidthDp) {
+        // 本地留存（UI 显示用）
+        local(context).edit()
                 .putBoolean("enabled", true)
                 .putInt("hollow_height_dp", hollowHeightDp)
                 .putInt("meter_width_dp", meterWidthDp)
                 .commit();
-        makeWorldReadable(activity);
-        Toast.makeText(activity, R.string.saved, Toast.LENGTH_SHORT).show();
+
+        // 同步到 LSPosed 远程配置，SystemUI 内的 hook 从这里读取
+        boolean synced = false;
+        if (service != null) {
+            try {
+                service.getRemotePreferences(PREF_NAME).edit()
+                        .putBoolean("enabled", true)
+                        .putInt("hollow_height_dp", hollowHeightDp)
+                        .putInt("meter_width_dp", meterWidthDp)
+                        .apply();
+                synced = true;
+            } catch (Throwable ignored) {
+            }
+        }
+        Toast.makeText(context,
+                synced ? R.string.saved : R.string.saved_no_service,
+                Toast.LENGTH_LONG).show();
     }
 
     public static int parse(EditText et, int fallback) {

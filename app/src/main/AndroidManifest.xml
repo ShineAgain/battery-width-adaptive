@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+      现代 libxposed 模块：禁止出现 xposedmodule / xposedminversion 等
+      legacy meta-data，否则 LSPosed 会按 legacy 模块解析导致静默失效。
+      模块元数据全部位于 META-INF/xposed/（module.prop、java_init.list、scope.list）。
+    -->
     <application
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Material.Light">
-
-        <!-- LSPosed 模块声明 -->
-        <meta-data
-            android:name="xposedmodule"
-            android:value="true" />
-        <meta-data
-            android:name="xposeddescription"
-            android:value="@string/module_desc" />
-        <meta-data
-            android:name="xposedminversion"
-            android:value="93" />
-        <meta-data
-            android:name="xposedscope"
-            android:resource="@array/xposed_scope" />
 
         <activity
             android:name=".MainActivity"
