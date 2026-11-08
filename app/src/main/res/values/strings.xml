@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title">电池宽度自适应（LSPosed 模块）</string>
+    <string name="hint_desc">等效于修改 SystemUI dex + resource.arsc 的电池宽度自适应补丁（思路来自 @Mari0us）。作用域：系统界面（com.android.systemui）。</string>
+    <string name="label_height">电池高度 battery_hollow_height（dp，默认 17）</string>
+    <string name="label_width">无数字电池初始宽度 battery_meter_width（dp，0 表示完全跟随素材）</string>
+    <string name="btn_save">保存（需重启系统界面生效）</string>
+    <string name="hint_usage">使用方法：在 LSPosed 中启用本模块并勾选作用域「系统界面」，保存配置后重启 SystemUI（或重启手机）。修改配置后同样需要重启系统界面。</string>
+    <string name="saved">已保存，请重启系统界面生效</string>
+</resources>

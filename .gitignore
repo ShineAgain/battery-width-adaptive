@@ -1,0 +1,8 @@
+# 工程级忽略
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+captures/
+.DS_Store
