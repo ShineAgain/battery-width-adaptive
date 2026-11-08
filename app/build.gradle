@@ -39,5 +39,5 @@ dependencies {
     compileOnly 'io.github.libxposed:annotation:1.0.0'
     compileOnly 'androidx.annotation:annotation:1.8.0'
     // 模块 App 侧与 LSPosed 守护进程通信（写远程配置），必须打包
-    implementation 'io.github.libxposed:service:102.0.1'
+    implementation 'io.github.libxposed:service:102.0.0'
 }
