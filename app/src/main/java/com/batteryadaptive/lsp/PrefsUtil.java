@@ -3,8 +3,7 @@ package com.batteryadaptive.lsp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Os;
+import android.system.Os;
 import android.widget.EditText;
 import android.widget.Toast;
 
